@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Hall</title>
+<style>
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0b1329; /* Deep dark slate background matching the theme */
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+  }
+
+  /* Top Navigation / Exam Header Bar */
+  .top {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+  }
+
+  .top h3 {
+      font-size: 18px;
+      font-weight: 650;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+  }
+
+  .top div {
+      font-size: 15px;
+      font-weight: 600;
+      color: #38bdf8;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 8px 16px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+  }
+
+  /* Main Wrapper Grid */
+  .wrap {
+      display: flex;
+      padding: 30px;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+  }
+
+  @media (max-width: 900px) {
+      .wrap {
+          flex-direction: column;
+          padding: 16px;
+      }
+  }
+
+  /* Question Box Card */
+  .qbox {
+      flex: 3;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+
+  #qno {
+      color: #94a3b8;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 12px;
+  }
+
+  #qtext {
+      color: #f1f5f9;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 24px;
+  }
+
+  /* Options Styling */
+  .opt {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      padding: 14px 18px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #cbd5e1;
+      font-size: 15px;
+  }
+
+  .opt:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #ffffff;
+      transform: translateX(3px);
+  }
+
+  .opt input[type="radio"] {
+      margin-right: 12px;
+      accent-color: #38bdf8;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+  }
+
+  /* Navigation Bar inside Question Box */
+  .nav {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+  }
+
+  .nav button {
+      padding: 12px 24px;
+      margin-right: 12px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.8);
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s ease;
+  }
+
+  .nav button:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: rgba(56, 189, 248, 0.3);
+      transform: translateY(-2px);
+  }
+
+  /* Palette Sidebar Card */
+  .pbox {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  }
+
+  .pbox h4 {
+      color: #f8fafc;
+      font-size: 16px;
+      font-weight: 650;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Question Palette Grid */
+  .palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+  }
+
+  .pbtn {
+      width: 42px;
+      height: 42px;
+      color: #ffffff;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      background: rgba(239, 68, 68, 0.25); /* Sleek translucent red for unattempted */
+      border-color: rgba(239, 68, 68, 0.4);
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+  }
+
+  .pbtn:hover {
+      transform: scale(1.05);
+  }
+
+  .pbtn.done {
+      background: rgba(34, 197, 94, 0.25); /* Sleek translucent green for attempted */
+      border-color: rgba(34, 197, 94, 0.5);
+      color: #86efac;
+  }
+
+  .pbtn.current {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+  }
+
+  .legend {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+  }
+
+  .legend span {
+      color: #f1f5f9;
+      font-weight: 600;
+  }
+
+  /* Scrollbar customization */
+  ::-webkit-scrollbar {
+      width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <h3 th:text="${exam.title}"></h3>
+    <div>Time left: <span id="examTimer"></span></div>
+  </div>
+
+  <div class="wrap">
+    <div class="qbox">
+      <div>
+        <h4 id="qno"></h4>
+        <p id="qtext"></p>
+        <div id="options"></div>
+      </div>
+      <div class="nav">
+        <button onclick="prev()">Previous</button>
+        <button onclick="next()">Next</button>
+        <button onclick="submitExam()" style="background: linear-gradient(135deg, #059669, #10b981); color:white; border:none; margin-left:auto; margin-right:0; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">Submit Exam</button>
+      </div>
+    </div>
+
+    <div class="pbox">
+      <h4>Question Palette</h4>
+      <div class="palette" id="palette"></div>
+      <p class="legend">Attempted: <span id="doneCount">0</span> / <span id="totalCount">0</span></p>
+      <p class="legend" style="margin-top: 8px;">🟢 Green = attempted <br>🔴 Red = not attempted</p>
+    </div>
+  </div>
+
+<script th:inline="javascript">
+  // questions from server
+  var questions = [
+    /*[# th:each="q : ${questions}"]*/
+    {
+      id: /*[[${q.id}]]*/ 0,
+      text: /*[[${q.questionText}]]*/ '',
+      a: /*[[${q.optionA}]]*/ '',
+      b: /*[[${q.optionB}]]*/ '',
+      c: /*[[${q.optionC}]]*/ '',
+      d: /*[[${q.optionD}]]*/ ''
+    },
+    /*[/]*/
+  ];
+
+  var answers = {};   // questionId -> chosen option
+  var current = 0;
+
+  function showQuestion() {
+    var q = questions[current];
+    document.getElementById('qno').textContent = 'Question ' + (current + 1) + ' of ' + questions.length;
+    document.getElementById('qtext').textContent = q.text;
+
+    var letters = ['A', 'B', 'C', 'D'];
+    var texts = [q.a, q.b, q.c, q.d];
+    var html = '';
+    for (var i = 0; i < 4; i++) {
+      var checked = answers[q.id] === letters[i] ? 'checked' : '';
+      html += '<label class="opt"><input type="radio" name="opt" value="' + letters[i] + '" ' + checked +
+              ' onchange="choose(\'' + letters[i] + '\')"> ' + letters[i] + '. <span class="otext"></span></label>';
+    }
+    document.getElementById('options').innerHTML = html;
+
+    // put option text safely
+    var spans = document.querySelectorAll('.otext');
+    for (var j = 0; j < 4; j++) spans[j].textContent = texts[j];
+
+    drawPalette();
+  }
+
+  function choose(letter) {
+    answers[questions[current].id] = letter;
+    drawPalette();
+  }
+
+  function drawPalette() {
+    var html = '';
+    var done = 0;
+    for (var i = 0; i < questions.length; i++) {
+      var cls = 'pbtn';
+      if (answers[questions[i].id]) { cls += ' done'; done++; }
+      if (i === current) cls += ' current';
+      html += '<button class="' + cls + '" onclick="goTo(' + i + ')">' + (i + 1) + '</button>';
+    }
+    document.getElementById('palette').innerHTML = html;
+    document.getElementById('doneCount').textContent = done;
+    document.getElementById('totalCount').textContent = questions.length;
+  }
+
+  function goTo(i) { current = i; showQuestion(); }
+  function next() { if (current < questions.length - 1) { current++; showQuestion(); } }
+  function prev() { if (current > 0) { current--; showQuestion(); } }
+
+  if (questions.length > 0) showQuestion();
+
+  // exam countdown
+  var timeLeft = /*[[${examRemainingMs}]]*/ 0;
+  var examTimer = document.getElementById('examTimer');
+
+  function updateTimer() {
+    if (timeLeft <= 0) {
+      examTimer.textContent = '0m 0s';
+      clearInterval(timerId);
+      sendAnswers();   // auto submit
+      return;
+    }
+    var s = Math.floor(timeLeft / 1000);
+    examTimer.textContent = Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+    timeLeft -= 1000;
+  }
+  var timerId = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  // send answers to server
+  function sendAnswers() {
+    fetch('/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answers)
+    }).then(function () {
+      window.location = '/submitted';
+    });
+  }
+
+  function submitExam() {
+    if (confirm('Submit the exam? You cannot change answers after this.')) {
+      sendAnswers();
+    }
+  }
+</script>
+</body>
+</html>

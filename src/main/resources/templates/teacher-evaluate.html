@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluate Student Examination</title>
+<style>
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0b1329; /* Deep dark slate background matching the theme */
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+  }
+
+  /* Top Header Bar */
+  .top {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+  }
+
+  .top h3 {
+      font-size: 18px;
+      font-weight: 650;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+  }
+
+  .top h3 span {
+      color: #38bdf8;
+  }
+
+  /* Main Content Container */
+  .content {
+      padding: 30px;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      flex: 1;
+  }
+
+  /* Question Card */
+  .qcard {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.2s ease;
+  }
+
+  .qcard:hover {
+      border-color: rgba(56, 189, 248, 0.25);
+  }
+
+  .qcard p {
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+  }
+
+  .qcard p b {
+      color: #f8fafc;
+  }
+
+  /* Answer evaluation states */
+  .right {
+      color: #4ade80 !important;
+      background: rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+  }
+
+  .wrong {
+      color: #f87171 !important;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+  }
+
+  /* Marks Number Input */
+  input[type=number] {
+      width: 70px;
+      padding: 6px 10px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s ease;
+  }
+
+  input[type=number]:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+  }
+
+  /* Sticky Bottom Save Actions Bar */
+  .bottom {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      bottom: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-top: 20px;
+  }
+
+  .bottom p {
+      color: #94a3b8;
+      font-size: 15px;
+      font-weight: 500;
+  }
+
+  .bottom p b {
+      color: #38bdf8;
+      font-size: 18px;
+      font-weight: 700;
+  }
+
+  /* Action Buttons */
+  button[type=submit] {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+  }
+
+  button[type=submit]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+      background: linear-gradient(135deg, #047857, #059669);
+  }
+
+  .bottom a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 16px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      transition: all 0.2s ease;
+  }
+
+  .bottom a:hover {
+      background: rgba(51, 65, 85, 0.8);
+      color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+      .content {
+          padding: 16px;
+      }
+
+      .bottom {
+          flex-direction: column;
+          gap: 15px;
+          text-align: center;
+      }
+
+      .bottom button[type=submit], .bottom a {
+          width: 100%;
+          text-align: center;
+      }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+      width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <h3>Evaluating: <span th:text="${student.name}"></span>
+      (<span th:text="${student.enrollmentNo}"></span>)</h3>
+  </div>
+
+  <div class="content">
+    <form th:action="@{'/teacher/evaluate/' + ${student.id}}" method="post">
+
+      <div class="qcard" th:each="r, stat : ${rows}">
+        <p><b>Q<span th:text="${stat.count}"></span>.</b> <span th:text="${r.question}"></span></p>
+        <p>Student answer:
+          <span th:text="${r.selected}"
+                th:class="${r.selected == r.correct} ? 'right' : 'wrong'"></span>
+          <span th:text="${r.selectedText}"></span>
+        </p>
+        <p>Correct answer: <b th:text="${r.correct}"></b>
+          <span th:text="${r.correctText}"></span></p>
+        <p>Marks:
+          <input type="number" class="mark"
+                 th:name="'marks_' + ${r.answerId}"
+                 th:value="${r.marks}" min="0" th:max="${r.maxMarks}">
+          / <span th:text="${r.maxMarks}"></span>
+        </p>
+      </div>
+
+      <div class="bottom">
+        <p>Total: <b id="total">0</b></p>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="/teacher/dashboard">Back</a>
+          <button type="submit">Save Marks</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+<script>
+  // live total of all marks
+  function updateTotal() {
+    var inputs = document.querySelectorAll('.mark');
+    var sum = 0;
+    for (var i = 0; i < inputs.length; i++) {
+      sum += parseInt(inputs[i].value) || 0;
+    }
+    document.getElementById('total').textContent = sum;
+  }
+  var all = document.querySelectorAll('.mark');
+  for (var i = 0; i < all.length; i++) {
+    all[i].addEventListener('input', updateTotal);
+  }
+  updateTotal();
+</script>
+</body>
+</html>

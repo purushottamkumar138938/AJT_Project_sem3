@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Login</title>
+<style>
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a, #6366f1);
+      color: #f8fafc;
+      position: relative;
+      overflow-x: hidden;
+      padding: 20px;
+  }
+
+  /* Background decorative blurred circles matching previous theme */
+  body::before,
+  body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+  }
+
+  body::before {
+      width: 300px;
+      height: 300px;
+      background: rgba(56, 189, 248, 0.2);
+      filter: blur(2px);
+      top: -80px;
+      left: -80px;
+  }
+
+  body::after {
+      width: 350px;
+      height: 350px;
+      background: rgba(168, 85, 247, 0.2);
+      filter: blur(2px);
+      bottom: -100px;
+      right: -80px;
+  }
+
+  /* Main Glassmorphism Login Card */
+  .box {
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 35px;
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+          transform: translateY(20px);
+      }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  /* Card Subtitle / Header tagline */
+  .box::before-text {
+      content: "Welcome Back";
+  }
+
+  h2 {
+      color: #ffffff;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+      letter-spacing: 0.5px;
+  }
+
+  h2::before {
+      content: "Welcome Back";
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+  }
+
+  /* Input fields styling */
+  input {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      outline: none;
+  }
+
+  input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+  }
+
+  input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+      background: rgba(15, 23, 42, 0.6);
+  }
+
+  /* Login Button Styling */
+  button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.25);
+  }
+
+  button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(56, 189, 248, 0.4);
+      background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+  }
+
+  button:active {
+      transform: translateY(0);
+  }
+
+  /* Error message styling */
+  .error {
+      color: #fca5a5;
+      font-size: 13.5px;
+      text-align: center;
+      margin-bottom: 12px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+  }
+
+  /* Hide empty error paragraph nicely if thymeleaf returns blank */
+  .error:empty {
+      display: none;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 480px) {
+      .box {
+          padding: 30px 20px;
+          border-radius: 18px;
+      }
+
+      h2 {
+          font-size: 22px;
+      }
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Teacher Login</h2>
+    <p class="error" th:text="${error}"></p>
+    <form action="/teacher/login" method="post">
+      <input type="text" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
